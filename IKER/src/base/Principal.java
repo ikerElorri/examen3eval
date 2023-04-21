@@ -1,6 +1,10 @@
 package base;
 
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Principal {
@@ -15,16 +19,27 @@ public class Principal {
 	public static void main(String[] args) {
 
 		System.out.println(
-				"Este programa lee el nivel de agua de una presa y permite abrir compuertas si tenemos permiso (el nivel es superior a 50) y las compuertas están verificadas.");
+				"Este programa lee el nivel de agua de una presa y permite abrir compuertas si tenemos permiso (el nivel es superior a 50) y las compuertas estï¿½n verificadas.");
 
 		int nivel = leerNivelAgua();
 
 		mostrarMenu(nivel);
-
 	}
 
 	private static void mostrarMenu(int nivel) {
 		int opcion = 0;
+		LOGGER.setLevel(Level.FINE);
+		Handler fileHandler = null;
+		try {
+			fileHandler = new FileHandler("./logs/Selecciones.log", true);
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LOGGER.addHandler(fileHandler);
+		System.out.println("escribe nivel");
+		opcion = teclado.nextInt();
+		LOGGER.log(Level.INFO, "Palabra: " +opcion);
 		do {
 			System.out.println();
 			System.out.println("Nivel del agua: " + nivel);
@@ -37,7 +52,7 @@ public class Principal {
 			System.out.println("	4. Verificar compuertas. Estado: " + (compuertasVerificadas ? "VERIFICADAS" : "NO VERIFICADAS"));
 			System.out.println("5. Salir");
 			System.out.println();
-			System.out.print("Introduce opción: ");
+			System.out.print("Introduce opciï¿½n: ");
 			opcion = teclado.nextInt();
 			switch (opcion) {
 			case 1:
@@ -48,7 +63,7 @@ public class Principal {
 			case 2:
 				if(abrirCompuertas()) {
 					System.out.println();
-					System.out.print("¡Compuertas abiertas!");
+					System.out.print("ï¿½Compuertas abiertas!");
 				}else {
 					System.out.println();
 					System.out.print("No se cumplen las condiciones para abrir compuertas.");
@@ -65,7 +80,7 @@ public class Principal {
 				compuertasVerificadas = verificarCompuertas();
 				if(compuertasVerificadas) {
 					System.out.println();
-					System.out.print("¡Compuertas verificadas!");
+					System.out.print("ï¿½Compuertas verificadas!");
 				}
 				break;
 			default:
@@ -86,8 +101,12 @@ public class Principal {
 			return false;
 		}
 	}
-	
-	static boolean solicitarPermiso(int nivel) {
+
+	/**
+	 * @author nivel
+	 * el case de solicitar permiso, comprueba el nivel que tiene y dependiendo del nivel, el cual tendra que ser superior a 50 para que conceda el permiso
+	 */
+	public static boolean solicitarPermiso(int nivel) {
 		if (nivel > 50) {
 			return true;
 		}else {
